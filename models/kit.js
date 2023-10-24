@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const KitSchema = new Schema({
-    team: { type: Schema.Types.ObjectId, ref: "Team", required: true, maxLength: 100 },
+    team: { type: Schema.Types.ObjectId, ref: "Team", required: true, },
     season: { type: String, required: true, maxLength: 100 },
   });
 
