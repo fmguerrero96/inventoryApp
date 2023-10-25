@@ -9,7 +9,7 @@ const TeamSchema = new Schema({
 });
 
 // Virtual for team's URL
-LeagueSchema.virtual("url").get(function () {
+TeamSchema.virtual("url").get(function () {
     return `/catalog/team/${this._id}`;
   });
 
