@@ -5,7 +5,29 @@ const KitInstance = require("../models/kitinstance")
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
-  
+  // Get details of books, book instances, authors and genre counts (in parallel)
+  const [
+    numKits,
+    numLeagues,
+    numTeams,
+    numKitInstances,
+    numKitInstancesInStock,
+  ] = await Promise.all([
+    Kit.countDocuments({}).exec(),
+    League.countDocuments({}).exec(),
+    Team.countDocuments({}).exec(),
+    KitInstance.countDocuments({}).exec(),
+    KitInstance.countDocuments({ in_stock: true }).exec()
+  ])
+
+  res.render("index", {
+    title: "Vintage Football Kits",
+    kit_count: numKits,
+    league_count: numLeagues,
+    team_count: numTeams,
+    kitInstance_count: numKitInstances,
+    inStockKits: numKitInstancesInStock
+  })
 });
 
 // Display list of all kits.
