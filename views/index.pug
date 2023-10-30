@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+extends layout
+
+block content
+  h1= title
+  p Welcome to #[em= title]
+
+  h1 Our Products 
+
+  p Here is a list of products you can find in our store:
+
+  ul
+    li #[strong Kits:] !{kit_count}
+    li #[strong Instances:] !{kitInstance_count}
+    li #[strong In-stock kits:] !{inStockKits}
+    li #[strong Teams:] !{team_count}
+    li #[strong Leagues:] !{league_count}
+
