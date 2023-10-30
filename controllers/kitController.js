@@ -1,8 +1,11 @@
 const Kit = require("../models/kit");
+const League = require("../models/league")
+const Team = require("../models/team")
+const KitInstance = require("../models/kitinstance")
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Site Home Page");
+  
 });
 
 // Display list of all kits.
