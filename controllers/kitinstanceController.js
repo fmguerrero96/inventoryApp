@@ -3,7 +3,18 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all KitInstances.
 exports.kitinstance_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: KitInstance list");
+  const all_instances = await KitInstance.find({}, "kit price size in_stock")
+  .populate({
+    path: 'kit',
+    populate: { path: 'team' }
+  })
+  .sort({ team: 1 })
+  .exec()
+
+  res.render('kitInstance_list', {
+    title: 'List of individual kit instances',
+    kit_instances: all_instances,
+  })
 });
 
 // Display detail page for a specific KitInstance.
