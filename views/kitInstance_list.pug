@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each val in kit_instances
+      li
+        a(href=val.url) #{val.kit.team.name} : #{val.kit.season} -
+        if val.in_stock==true 
+          span.text-success  IN STOCK
+        else if val.in_stock==false 
+          span.text-danger  OUT OF STOCK
+        span  ($#{val.price}) size: #{val.size}
+        //- else
+        //-   span.text-warning #{val.status}
+        //- if val.status!='Available'
+        //-   span  (Due: #{val.due_back} )
+
+    else
+      li There are no book copies in this library.
