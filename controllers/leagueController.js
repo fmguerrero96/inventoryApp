@@ -3,7 +3,9 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Leagues.
 exports.league_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: League list");
+  const leagues = await League.find().sort({ name: 1}).exec()
+
+  res.render('league_list', {title: 'List of Leagues', league_list: leagues,})
 });
 
 // Display detail page for a specific League.
