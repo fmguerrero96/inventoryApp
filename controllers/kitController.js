@@ -32,7 +32,12 @@ exports.index = asyncHandler(async (req, res, next) => {
 
 // Display list of all kits.
 exports.kit_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Kit list");
+  const allKits = await Kit.find({}, "team season")
+  .populate('team')
+  .sort({ team: 1 })
+  .exec();
+
+  res.render('kit_list', { title: 'List of Kits', kit_list: allKits});
 });
 
 // Display detail page for a specific kit.
