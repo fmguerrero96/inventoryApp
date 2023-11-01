@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+  h1 League: #{league.name}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Kits form this league
+
+    dl
+      each kit in league_kits
+        dt
+          a(href=kit.url) #{kit.team.name}
+        dd #{kit.season}
+
+      else
+        p This league has no kits
