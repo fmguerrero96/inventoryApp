@@ -42,7 +42,25 @@ exports.kit_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific kit.
 exports.kit_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: kit detail: ${req.params.id}`);
+  const [kit, kitInstances] = await Promise.all([
+    Kit.findById(req.params.id).populate({
+      path: 'team',
+      populate: { path: 'league' }
+    }).exec(),
+    KitInstance.find({ kit: req.params.id }).exec()
+  ]);
+
+  if(kit === null){
+    const err = new Error('Kit not found');
+    err.status = 404;
+    return next(err)
+  }
+
+  res.render("kit_detail", {
+    title: kit.team.name,
+    kit: kit,
+    kit_instances: kitInstances,
+  });
 });
 
 // Display kit create form on GET.
