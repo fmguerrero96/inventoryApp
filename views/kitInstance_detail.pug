@@ -1,0 +1,17 @@
+extends layout
+
+block content
+
+  h1 ID: #{kitInstance._id}
+
+  p #[strong Team: ]
+    a(href=kitInstance.kit.url) #{kitInstance.kit.team.name}
+  p #[strong Season: ] #{kitInstance.kit.season}
+  p #[strong Price: ] #{kitInstance.price}
+  p #[strong Size: ] #{kitInstance.size}
+  p #[strong Status: ]
+    if kitInstance.in_stock==true 
+      span.text-success In Stock
+    else
+      span.text-danger Out of Stock
+
