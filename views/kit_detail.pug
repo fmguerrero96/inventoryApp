@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1 Kit: #{kit.team.name}
+
+  p #[strong Season: ] #{kit.season}
+
+  p #[strong League: ]
+      a(href=kit.team.league.url) #{kit.team.league.name}
+
+  div(style='margin-left:20px;margin-top:20px')
+    h4 Kit Instances
+
+    each val in kit_instances
+      hr
+      if val.in_stock==true
+        p.text-success Available
+        p #[strong SIZE: ] #{val.size}
+        p #[strong Price: ] #{val.price}
+        p #[strong ID: ]
+            a(href=val.url) #{val._id}
+      else 
+        p.text-danger Not Available
+        p #[strong SIZE: ] #{val.size}
+        p #[strong Price: ] #{val.price}
+        p #[strong ID: ]
+            a(href=val.url) #{val._id}
+
+    else
+      p There are no copies of this book in the library.
