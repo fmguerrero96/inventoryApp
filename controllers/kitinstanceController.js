@@ -19,7 +19,21 @@ exports.kitinstance_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific KitInstance.
 exports.kitinstance_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: KitInstance detail: ${req.params.id}`);
+  const kitInstance = await KitInstance.findById(req.params.id).populate({
+    path: 'kit',
+    populate: { path: 'team' }
+  }).exec()
+
+  if (kitInstance === null) {
+    const err = new Error('Kit Instance Not Found');
+    err.status = 404;
+    return next(err)
+  }
+
+  res.render('kitInstance_detail', {
+    title: 'Instance',
+    kitInstance: kitInstance,
+  })
 });
 
 // Display KitInstance create form on GET.
