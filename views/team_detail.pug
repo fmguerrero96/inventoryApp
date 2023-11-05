@@ -1,0 +1,21 @@
+extends layout
+
+block content
+
+
+  h1 Team: #{team.name}
+  p #[strong From: ] #{team.city}
+  p #[strong Plays in: ] #{team.league.name}
+
+  hr
+  
+  div(style='margin-left:20px;margin-top:20px')
+    h4 Kits
+
+    dl
+      each val in kits
+        dt
+          a(href=val.url) #{val.season}
+
+      else
+        p This team has no kits.
