@@ -35,7 +35,7 @@ exports.team_detail = asyncHandler(async (req, res, next) => {
 
 // Display Team create form on GET.
 exports.team_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Team create GET");
+  res.render("team_form", { title: "Create Team" })
 });
 
 // Handle Team create on POST.
