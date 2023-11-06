@@ -34,9 +34,9 @@ exports.league_detail = asyncHandler(async (req, res, next) => {
 });
 
 // Display League create form on GET.
-exports.league_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: League create GET");
-});
+exports.league_create_get = (req, res, next) => {
+  res.render("league_form", { title: "Create League"})
+};
 
 // Handle League create on POST.
 exports.league_create_post = asyncHandler(async (req, res, next) => {
