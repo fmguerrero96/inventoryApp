@@ -37,20 +37,64 @@ exports.team_detail = asyncHandler(async (req, res, next) => {
 // Display Team create form on GET.
 exports.team_create_get = asyncHandler(async (req, res, next) => {
   //Get all leagues, they're necessary for creating new teams
-  const allLeagues = await League.find().exec()
+  const allLeagues = await League.find({}, "name").exec();
 
-  res.render("team_form", { title: "Create Team", leagues: allLeagues })
+  res.render("team_form", { title: "Create Team", league_list: allLeagues })
 });
 
 // Handle Team create on POST.
 exports.team_create_post = [
-  // body("name")
-  //   .trim()
-  //   .isLength({ min: 3 })
-  //   .escape()
-  //   .withMessage("Team name must be specified.")
-  //   .isAlphanumeric()
-  //   .withMessage("First name has non-alphanumeric characters."),
+  // Validate and sanitize fields.
+  body("name")
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage("Team name must be specified.")
+    .isAlphanumeric()
+    .withMessage("Name has non-alphanumeric characters."),
+  body("league", "League must not be empty")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+  body("city")
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage("City name must be specified.")
+    .isAlphanumeric()
+    .withMessage("City has non-alphanumeric characters."),
+  
+   // Process request after validation and sanitization.
+   asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a Team object with escaped and trimmed data.
+    const team = new Team({
+      name: req.body.name,
+      league: req.body.league,
+      city: req.body.city
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors.
+      // Render form again with sanitized values and error messages.
+      const allLeagues = await League.find({}, "name").exec();
+
+      res.render("team_form", {
+        title: "Create Team",
+        league_list: allLeagues,
+        selected_league: team.league._id,
+        errors: errors.array(),
+        team: team,
+      });
+      return;
+    } else {
+      // Data from form is valid
+      await team.save();
+      res.redirect(team.url);
+    }
+  }),
 ]
 
 // Display Team delete form on GET.
