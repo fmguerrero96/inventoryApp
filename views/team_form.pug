@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  h1=title
+
+  form(method='POST' action='')
+   
+    div.form-group
+      label(for='name') Team Name:
+      input#name.form-control(type='text' placeholder='Arsenal, Barcelona etc.' name='name' required='true' value=(undefined===team ? '' : team.name))
+    div.form-group
+      label(for='city') City of Origin:
+      input#city.form-control(type='text' placeholder='Rome, Paris, Monterrey etc.' name='city' value=(undefined===team  ? '' : team.city))
+    div.form-group
+      label(for='league') League:
+      select#league.form-control(type='select' placeholder='Select League' name='league' required='true')
+        - league_list.sort(function(a, b) {let textA = a.name.toUpperCase(); let textB = b.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for league in league_list
+          if team
+            option(value=league._id, selected=(selected_league==team._id.toString() ? 'selected' : false) ) #{league.name}
+          else
+            option(value=league._id) #{league.name}
+            div.form-group
+    
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
