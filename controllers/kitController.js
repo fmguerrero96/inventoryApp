@@ -67,7 +67,12 @@ exports.kit_detail = asyncHandler(async (req, res, next) => {
 
 // Display kit create form on GET.
 exports.kit_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: kit create GET");
+  const allTeams = await Team.find().exec()
+
+  res.render("kit_form", {
+    title: "Create new kit",
+    teams: allTeams
+  })
 });
 
 // Handle kit create on POST.
