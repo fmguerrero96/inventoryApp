@@ -41,7 +41,12 @@ exports.kitinstance_detail = asyncHandler(async (req, res, next) => {
 
 // Display KitInstance create form on GET.
 exports.kitinstance_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: KitInstance create GET");
+  const allKits = await Kit.find({}, "team season").populate("team").exec()
+
+  res.render("kitinstance_form", {
+    title: "Create kit instance",
+    kit_list: allKits,
+  })
 });
 
 // Handle KitInstance create on POST.
