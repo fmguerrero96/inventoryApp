@@ -7,7 +7,7 @@ block content
    
     div.form-group
       label(for='season') Season:
-      input#season.form-control(type='text' placeholder='i.e. 2002-2003' name='season' required='true' value=(undefined===kit ? '' : kit.season))
+      input#season.form-control(type='text' placeholder='i.e. 2002-2003' name='season' pattern='\\d{4}-\\d{4}' title='Please enter a season in the format YYYY-YYYY' required='true' value=(undefined===kit ? '' : kit.season))
     div.form-group
       label(for='team') Team:
       select#team.form-control(type='select' placeholder='Select Team' name='team' required='true')
