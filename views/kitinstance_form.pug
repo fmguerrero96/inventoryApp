@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  h1=title
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='kit') Kit:
+      select#kit.form-control(type='select' placeholder='Select kit' name='kit' required='true')
+        - kit_list.sort(function(a, b) {let textA = a.team.name.toUpperCase(); let textB = b.team.name.toUpperCase(); return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;});
+        for kit in kit_list
+          option(value=kit._id, selected=(selected_kit==kit._id.toString() ? 'selected' : false) ) #{kit.team.name} (#{kit.season})
+
+    div.form-group
+      label(for='price') Price:
+      input#price.form-control(type='number' min='1' step='any' name='price' required='true' value=(undefined===kitInstance ? '' : kitInstance.price))
+    div.form-group
+      label Availability:
+      div
+        label(for='in_stock') In stock:  
+            input#in_stock_in(type='radio', name='in_stock', value='true', checked=in_stock === true)
+        label(for='in_stock') Out of stock:
+            input#in_stock_in(type='radio', name='in_stock', value='false', checked=in_stock === false)
+              
+
+    div.form-group
+      label(for='size') Size:
+      select#status.form-control(type='select' name='size' required='true' )
+        option(value='XS' ) Extra Small
+        option(value='S' )  Small
+        option(value='M' ) Medium
+        option(value='L' ) Large
+        option(value='XL' ) Extra Large 
+        option(value='XXL' ) XX Large
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
