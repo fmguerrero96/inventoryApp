@@ -1,5 +1,8 @@
 const KitInstance = require("../models/kitinstance");
+const Kit = require("../models/kit")
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
+
 
 // Display list of all KitInstances.
 exports.kitinstance_list = asyncHandler(async (req, res, next) => {
