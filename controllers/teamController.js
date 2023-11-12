@@ -60,10 +60,8 @@ exports.team_create_post = [
     .trim()
     .isLength({ min: 3 })
     .escape()
-    .withMessage("City name must be specified.")
-    .isAlphanumeric()
-    .withMessage("City has non-alphanumeric characters."),
-  
+    .withMessage("City name must be specified."),
+
    // Process request after validation and sanitization.
    asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
@@ -119,7 +117,24 @@ exports.team_delete_get = asyncHandler(async (req, res, next) => {
 
 // Handle Team delete on POST.
 exports.team_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Team delete POST");
+  // Get details of team and all their kits (in parallel)
+  const [team, allTeamKits] = await Promise.all([
+    Team.findById(req.params.id).populate('league').exec(),
+    Kit.find({ team: req.params.id }, "team season").populate('team').exec(),
+  ]);
+
+  if(allTeamKits.length > 0){
+    res.render('team_delete', {
+      title: 'Delete Team',
+      team: team,
+      team_kits: allTeamKits,
+    })
+    return
+  } else {
+     // Team has no kits. Delete object and redirect to the list of teams.
+     await Team.findByIdAndRemove(req.body.teamid)
+     res.redirect("/catalog/teams")
+  }
 });
 
 // Display Team update form on GET.
