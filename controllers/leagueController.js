@@ -1,5 +1,6 @@
 const League = require("../models/league");
 const Kit = require("../models/kit");
+const Team = require("../models/team")
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
@@ -86,7 +87,22 @@ exports.league_create_post = [
 
 // Display League delete form on GET.
 exports.league_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: League delete GET");
+  // Get details of league and all its teams (in parallel)
+  const [league, allLeagueTeams] = await Promise.all([
+    League.findById(req.params.id).exec(),
+    Team.find({ league: req.params.id }, 'name league city').populate('league').exec(),
+  ]);
+
+  if(league === null){
+    //No results
+    res.redirect("/catalog/leagues")
+  }
+
+  res.render('league_delete', {
+    title: 'Delete league',
+    league: league,
+    league_teams: allLeagueTeams
+  })
 });
 
 // Handle League delete on POST.
