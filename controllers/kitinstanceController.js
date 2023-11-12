@@ -106,7 +106,18 @@ exports.kitinstance_create_post = [
 
 // Display KitInstance delete form on GET.
 exports.kitinstance_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: KitInstance delete GET");
+  const kitInstance = await KitInstance.findById(req.params.id)
+    .populate('kit')
+
+  if(kitInstance === null){
+    //no results 
+    res.redirect('/catalog/kitinstances')
+  }
+
+  res.render('kitinstance_delete', {
+    title: 'Delete Kit Instance',
+    kitInstance: kitInstance,
+  })
 });
 
 // Handle KitInstance delete on POST.
