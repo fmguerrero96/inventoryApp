@@ -122,7 +122,22 @@ exports.kit_create_post = [
 
 // Display kit delete form on GET.
 exports.kit_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: kit delete GET");
+  const [kit, allKitInstances] = await Promise.all([
+    Kit.findById(req.params.id).populate('team').exec(),
+    KitInstance.find({ kit: req.params.id }, 'kit price size in_stock')
+      .populate('kit').exec()
+  ]);
+
+  if(kit === null){
+    //no results
+    res.redirect('/catalog/kits')
+  }
+
+  res.render('kit_delete', {
+    title: 'Delete Kit',
+    kit: kit,
+    kit_instances: allKitInstances
+  })
 });
 
 // Handle kit delete on POST.
