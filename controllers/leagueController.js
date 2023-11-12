@@ -107,7 +107,25 @@ exports.league_delete_get = asyncHandler(async (req, res, next) => {
 
 // Handle League delete on POST.
 exports.league_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: League delete POST");
+  // Get details of league and all its teams (in parallel)
+  const [league, allLeagueTeams] = await Promise.all([
+    League.findById(req.params.id).exec(),
+    Team.find({ league: req.params.id }, 'name league city').populate('league').exec(),
+  ]);
+
+  if(allLeagueTeams.length > 0){
+    //league has teams associated to it. Render the form as in the GET route
+    res.render('league_delete', {
+      title: 'Delete league',
+      league: league,
+      league_teams: allLeagueTeams
+    })
+    return
+  } else {
+    // League has no teams. Delete object and redirect to the list of leagues.
+    await League.findByIdAndRemove(req.body.leagueid);
+    res.redirect("/catalog/leagues");
+  }
 });
 
 // Display League update form on GET.
