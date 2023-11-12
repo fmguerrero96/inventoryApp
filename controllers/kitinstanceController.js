@@ -125,7 +125,19 @@ exports.kitinstance_delete_get = asyncHandler(async (req, res, next) => {
 
 // Handle KitInstance delete on POST.
 exports.kitinstance_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: KitInstance delete POST");
+  const kitInstance = await KitInstance.findById(req.params.id)
+    .populate({
+      path: 'kit',
+      populate: { path: 'team' }
+    }).exec()
+
+  if(kitInstance){
+    //Instance exists
+    await KitInstance.findByIdAndRemove(req.body.instanceid);
+    res.redirect("/catalog/kitinstances");
+  } else {
+    res.redirect("/catalog/kitinstances")
+  }
 });
 
 // Display KitInstance update form on GET.
