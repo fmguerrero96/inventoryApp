@@ -101,8 +101,8 @@ exports.team_create_post = [
 exports.team_delete_get = asyncHandler(async (req, res, next) => {
   // Get details of team and all their kits (in parallel)
   const [team, allTeamKits] = await Promise.all([
-    Team.findById(req.params.id).exec(),
-    Kit.find({ team: req.params.id }, "team season").exec(),
+    Team.findById(req.params.id).populate('league').exec(),
+    Kit.find({ team: req.params.id }, "team season").populate('team').exec(),
   ]);
 
   if(team === null){
