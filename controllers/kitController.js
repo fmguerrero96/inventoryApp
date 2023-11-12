@@ -166,7 +166,24 @@ exports.kit_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display kit update form on GET.
 exports.kit_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: kit update GET");
+  //Get kit info and all Teams for form.
+  const [kit, allTeams] = await Promise.all([
+    Kit.findById(req.params.id).populate('team').exec(),
+    Team.find().exec(),
+  ])
+
+  if(kit === null){
+    //No Results.
+    const err = new Error("Kit not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('kit_form', {
+    title: 'Update Kit',
+    kit: kit,
+    team_list: allTeams
+  })
 });
 
 // Handle kit update on POST.
