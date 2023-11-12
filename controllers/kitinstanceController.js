@@ -107,7 +107,10 @@ exports.kitinstance_create_post = [
 // Display KitInstance delete form on GET.
 exports.kitinstance_delete_get = asyncHandler(async (req, res, next) => {
   const kitInstance = await KitInstance.findById(req.params.id)
-    .populate('kit')
+    .populate({
+      path: 'kit',
+      populate: { path: 'team' }
+    }).exec()
 
   if(kitInstance === null){
     //no results 
