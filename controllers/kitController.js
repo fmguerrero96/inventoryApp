@@ -142,7 +142,26 @@ exports.kit_delete_get = asyncHandler(async (req, res, next) => {
 
 // Handle kit delete on POST.
 exports.kit_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: kit delete POST");
+  //Get kit info and all kit instances associated to it
+  const [kit, allKitInstances] = await Promise.all([
+    Kit.findById(req.params.id).populate('team').exec(),
+    KitInstance.find({ kit: req.params.id }, 'kit price size in_stock')
+      .populate('kit').exec()
+  ]);
+
+  if(allKitInstances.length > 0){
+    //Kit has instances associated to it, render delete form as in GET route
+    res.render('kit_delete', {
+      title: 'Delete Kit',
+      kit: kit,
+      kit_instances: allKitInstances
+    })
+    return
+  } else {
+    // Kit has no instances. Delete object and redirect to the list of leagues.
+    await Kit.findByIdAndRemove(req.body.kitid);
+    res.redirect("/catalog/kits");
+  }
 });
 
 // Display kit update form on GET.
