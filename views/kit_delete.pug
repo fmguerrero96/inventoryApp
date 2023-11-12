@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1 #{title}: #{kit.team.name}
+  p Season: #{kit.season}
+
+  if kit_instances.length
+
+    p #[strong Delete the following kit instances before attempting to delete this kit.]
+
+    div(style='margin-left:20px;margin-top:20px')
+
+      h4 Instances
+
+      dl
+      each instance in kit_instances
+        dt
+          a(href=instance.url) #{instance._id}
+        dd Size: #{instance.size}
+        dd Price: #{instance.price}
+
+  else
+    p Do you really want to delete this Kit?
+
+    form(method='POST' action='')
+      div.form-group
+        input#kitid.form-control(type='hidden',name='kitid', required='true', value=kit._id )
+
+      button.btn.btn-primary(type='submit') Delete
