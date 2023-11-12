@@ -99,7 +99,22 @@ exports.team_create_post = [
 
 // Display Team delete form on GET.
 exports.team_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Team delete GET");
+  // Get details of team and all their kits (in parallel)
+  const [team, allTeamKits] = await Promise.all([
+    Team.findById(req.params.id).exec(),
+    Kit.find({ team: req.params.id }, "team season").exec(),
+  ]);
+
+  if(team === null){
+    //No results
+    res.redirect("/catalog/teams")
+  }
+
+  res.render('team_delete', {
+    title: 'Delete Team',
+    team: team,
+    team_kits: allTeamKits,
+  })
 });
 
 // Handle Team delete on POST.
