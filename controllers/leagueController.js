@@ -130,7 +130,20 @@ exports.league_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display League update form on GET.
 exports.league_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: League update GET");
+  //Get league
+  const league = await League.findById(req.params.id).exec()
+
+  if (league === null) {
+    // No results.
+    const err = new Error("League not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('league_form', {
+    title: 'Update League',
+    league: league
+  })
 });
 
 // Handle League update on POST.
