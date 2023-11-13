@@ -147,6 +147,39 @@ exports.league_update_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle League update on POST.
-exports.league_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: League update POST");
-});
+exports.league_update_post = [
+  // Validate and sanitize the name/country field.
+  body("name", "League name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+  body("country", "The country must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a league object with escaped and trimmed data.
+    const league = new League({ name: req.body.name, 
+      country: req.body.country, _id: req.params.id });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("league_form", {
+        title: "Update League",
+        league: league,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid. Update the record.
+      const updatedleague = await League.findByIdAndUpdate(req.params.id, league, {});
+      // Redirect to book detail page.
+      res.redirect(updatedleague.url);
+    }
+  })
+]
