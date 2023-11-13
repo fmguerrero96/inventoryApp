@@ -142,7 +142,24 @@ exports.kitinstance_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display KitInstance update form on GET.
 exports.kitinstance_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: KitInstance update GET");
+  //Get instance info and all kits for form.
+  const [kitInstance, allKits] = await Promise.all([
+    KitInstance.findById(req.params.id).populate('kit').exec(),
+    Kit.find({}, "team season").populate("team").exec(),
+  ])
+
+  if (kitInstance === null) {
+    // No results.
+    const err = new Error("Instance not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('kitinstance_form', {
+    title: 'Update Instance',
+    kit_list: allKits,
+    kitInstance: kitInstance
+  })
 });
 
 // Handle KitInstance update on POST.
