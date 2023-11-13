@@ -160,6 +160,55 @@ exports.team_update_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle Team update on POST.
-exports.team_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Team update POST");
-});
+exports.team_update_post = [
+  // Validate and sanitize fields.
+  body("name")
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage("Team name must be specified.")
+    .isAlphanumeric()
+    .withMessage("Name has non-alphanumeric characters."),
+  body("league", "League must not be empty")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+  body("city")
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage("City name must be specified."),
+
+    // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    
+    // Create a Team object with escaped/trimmed data and old _id.
+    const team = new Team({
+      name: req.body.name,
+      league: req.body.league,
+      city: req.body.city,
+      _id: req.params.id
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors.
+      // Render form again with sanitized values and error messages.
+      const allLeagues = await League.find({}, "name").exec();
+
+      res.render("team_form", {
+        title: "Update Team",
+        league_list: allLeagues,
+        errors: errors.array(),
+        team: team,
+      });
+      return;
+    } else {
+      // Data from form is valid. Update record
+      const updatedTeam = await Team.findByIdAndUpdate(req.params.id, team, {})
+      //redirect to detail page
+      res.redirect(updatedTeam.url)
+    }
+  })
+]
