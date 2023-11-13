@@ -139,7 +139,24 @@ exports.team_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display Team update form on GET.
 exports.team_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Team update GET");
+  //Get team and leagues for form.
+  const [team, allLeagues] = await Promise.all([
+    Team.findById(req.params.id).exec(),
+    League.find().exec(),
+  ])
+
+  if (team === null) {
+    // No results.
+    const err = new Error("Team not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('team_form', {
+    title: 'Update Team',
+    league_list: allLeagues,
+    team: team,
+  })
 });
 
 // Handle Team update on POST.
