@@ -187,6 +187,47 @@ exports.kit_update_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle kit update on POST.
-exports.kit_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: kit update POST");
-});
+exports.kit_update_post = [
+  body("team")
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage("Team name must be specified."),
+  body('season')
+    .trim()
+    .isLength({ min: 4 })
+    .escape()
+    .withMessage("Please specify a season for the kit (i.e. 2002-2003)."),
+  
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    //Create a kit object with trimmed and escaped data.
+  const kit = new Kit({
+    team: req.body.team,
+    season: req.body.season,
+    _id: req.params.id,
+  })
+
+  if (!errors.isEmpty()) {
+    // There are errors.
+    // Render form again with sanitized values and error messages.
+    const allTeams = await Team.find({}, "name").exec()
+
+    res.render("kit_form", {
+      title: "Update kit",
+      team_list: allTeams,
+      //selected_team: kit.team._id,
+      errors: errors.array(),
+      kit: kit,
+    });
+    return;
+  } else {
+    // Data from form is valid. Update the record.
+    const updatedKit = await Kit.findByIdAndUpdate(req.params.id, kit, {});
+    //Redirect to detail page.
+    res.redirect(updatedKit.url)
+  }
+  })
+]
